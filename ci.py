@@ -11,3 +11,4 @@ class Ci(Record):
 
     def save(self, ci_manager):
         return ci_manager.save(self)
+
