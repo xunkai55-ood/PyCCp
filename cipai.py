@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
+from consts import REF_PATH
+import os
+import codecs
+
 breakings = list(u',.，。、')
 brk_1 = list(u'.。')
 brk_2 = list(u',，、')
@@ -110,3 +114,37 @@ def is_equal(rec_a, rec_b):
     else:
         return False
 
+class CipaiAlias(object):
+
+    def __init__(self, pai):
+        self._alias = set([pai])
+        self._lier = set()
+        f = codecs.open(os.path.join(REF_PATH, "cipai_alias.txt"), "r", "utf-8")
+        lines = f.readlines()
+        f.close()
+        for line in lines:
+            lst = [x.strip() for x in line.split(u"、")]
+            if pai in lst:
+                self._alias |= set(lst)
+        for line in lines:
+            lst = [x.strip() for x in line.split(u"、")]
+            for name in lst:
+                for alias in self._alias:
+                    if name != alias and name.find(alias) == 0: # is prefix
+                        self._lier |= set([name])
+        print("===")
+        for each in self._lier:
+            print each
+        print("===")
+
+    def match(self, subject):
+        
+        for alias in self._alias:
+            if subject.find(alias) == 0:
+                for lier in self._lier:
+                    if subject.find(lier) and lier.find(alias):
+                        break
+                else:
+                    return alias
+        else:
+            return False

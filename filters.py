@@ -1,6 +1,7 @@
 from .record import Record
 from .cipai import is_similar
 from .cipai import is_equal
+from .cipai import CipaiAlias
 
 class PoetryFilter(object):
 
@@ -25,6 +26,27 @@ class SubjectPF(PoetryFilter):
         downs = []
         for rec in ups:
             if rec.subject.find(self._key) >= 0:
+                downs.append(rec)
+        return downs
+
+class BasicCipaiPF(PoetryFilter):
+
+    def __init__(self, pai):
+        self._ca = CipaiAlias(pai)
+
+    def __unicode__(self):
+        s = u""
+        for x in self._ca._alias:
+            s += x + '\n'
+        return u"It's a basic Pai poetry filter\n" + s
+
+    def __str__(self):
+        return self.__unicode__().encode("utf-8")
+
+    def filter(self, ups):
+        downs = []
+        for rec in ups:
+            if self._ca.match(rec.subject) != 0:
                 downs.append(rec)
         return downs
 
